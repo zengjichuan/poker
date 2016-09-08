@@ -126,15 +126,21 @@ $(document).ready(function(){
     $('#num_players').click(function(){
         var op = $('#ts');
 
-        refresh();
         num_players = op.val();
         if (num_players == 3){
             $("#player_row_3").hide();
             remain_card_num = 3;
+            $("#4_0").show();
+            $("#4_1").show();
         } else{
             $("#player_row_3").show();
             remain_card_num = 4;
+            $("#4_0").hide();
+            $("#4_1").hide();
+            delete card_left["w1"];
+            delete card_left["w2"];
         }
+        refresh();
     });
 
     $('#reload_page').click(function(){
@@ -145,15 +151,13 @@ $(document).ready(function(){
         $(this).hide();
     });
     $(".card2choose").on('click', function(){
-
-        //alert($(this).attr("id") + " Please add at least 3 members");
-        // cover the card
-        //$(this).prop("src", "./images/cards/A4.jpg");
         $(this).hide();
         // submit the card to player
         send_card2player($(this).attr("id"));
         total_card_num--;
+        delete card_left[getKeyByValue(card_left, $(this).attr("id"))];
         under_cards.splice(under_cards.indexOf($(this).attr("id")),1);
+        //alert("total "+total_card_num+" remain "+remain_card_num+" under " + under_cards.length);
         if(total_card_num - remain_card_num == 0){
             invalidate_under();
         }
@@ -178,7 +182,7 @@ $(document).ready(function(){
             $('#cid_notfound').html("<b>编码不正确</b>");
             return;
         }
-        delete card_left[$('#cid').val()];
+        //delete card_left[$('#cid').val()];
         $("#"+card_id).click();
     });
 });
@@ -187,10 +191,19 @@ function init_variables(){
     players = [];
     under_cards = [];
     card_left = jQuery.extend({}, code_book);
-    total_card_num = 54;
+    if (num_players == 3){
+        total_card_num = 54;
+        remain_card_num = 3
+    }else{
+        total_card_num = 52;
+        remain_card_num = 4;
+        delete card_left["w1"];
+        delete card_left["w2"];
+    }
+
     offset = 0;
-    for (var key in sort_squence)
-        under_cards.push(key);
+    for (var key in card_left)
+        under_cards.push(card_left[key]);
 
     for (var i = 0; i < num_players; i++){
         players.push(new player(i, [], false));
@@ -250,7 +263,12 @@ function refresh(){
         invalidate_cards(i);
     }
     invalidate_under();
+
     $(".card2choose").show();
+    if (num_players == 4) {
+        $("#4_0").hide();
+        $("#4_1").hide();
+    }
 }
 function player(id, cards, sorted){
     this.id = id;
@@ -258,3 +276,9 @@ function player(id, cards, sorted){
     this.sorted = sorted;
 }
 
+function getKeyByValue(dict, value){
+    for (var key in dict){
+        if(dict[key] == value)
+            return key;
+    }
+}
