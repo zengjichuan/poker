@@ -56,12 +56,70 @@ var sort_squence = {
     '4_1': 53,
 };
 
+var code_book = {
+    '12': '0_0',
+    '22': '0_1',
+    '32': '0_2',
+    '42': '0_3',
+    '52': '0_4',
+    '62': '0_5',
+    '72': '0_6',
+    '82': '0_7',
+    '92': '0_8',
+    '102': '0_9',
+    'j2': '0_10',
+    'q2': '0_11',
+    'k2': '0_12',
+    '14': '1_0',
+    '24': '1_1',
+    '34': '1_2',
+    '44': '1_3',
+    '54': '1_4',
+    '64': '1_5',
+    '74': '1_6',
+    '84': '1_7',
+    '94': '1_8',
+    '104': '1_9',
+    'j4': '1_10',
+    'q4': '1_11',
+    'k4': '1_12',
+    '13': '2_0',
+    '23': '2_1',
+    '33': '2_2',
+    '43': '2_3',
+    '53': '2_4',
+    '63': '2_5',
+    '73': '2_6',
+    '83': '2_7',
+    '93': '2_8',
+    '103': '2_9',
+    'j3': '2_10',
+    'q3': '2_11',
+    'k3': '2_12',
+    '11': '3_0',
+    '21': '3_1',
+    '31': '3_2',
+    '41': '3_3',
+    '51': '3_4',
+    '61': '3_5',
+    '71': '3_6',
+    '81': '3_7',
+    '91': '3_8',
+    '101': '3_9',
+    'j1': '3_10',
+    'q1': '3_11',
+    'k1': '3_12',
+    'w1': '4_0',
+    'w2': '4_1',
+};
+
 var num_players = 4;
 var players = [];
 var offset = 0;
 var total_card_num = 54;
 var remain_card_num = 3;
 var under_cards =[];
+var card_left = jQuery.extend({}, code_book);
 
 $(document).ready(function(){
     init_variables();
@@ -106,12 +164,31 @@ $(document).ready(function(){
         index = parseInt(player_to_sort[player_to_sort.length - 1]);
         sort_cards(index);
     });
+
+    $('#cid').keyup(function(){
+        if(event.keyCode == 13){
+            $('#cid_btn').click();
+        }
+    });
+
+    $('#cid_btn').click(function(){
+        $('#cid_notfound').html("");
+        card_id = card_left[$('#cid').val()];
+        if (card_id == undefined){
+            $('#cid_notfound').html("<b>编码不正确</b>");
+            return;
+        }
+        delete card_left[$('#cid').val()];
+        $("#"+card_id).click();
+    });
 });
 
 function init_variables(){
     players = [];
     under_cards = [];
+    card_left = jQuery.extend({}, code_book);
     total_card_num = 54;
+    offset = 0;
     for (var key in sort_squence)
         under_cards.push(key);
 
@@ -120,6 +197,7 @@ function init_variables(){
     }
     // hide sort button
     $(".sort_btn").hide();
+    $('#cid_notfound').html("");
 }
 
 function send_card2player(card_id){
@@ -149,7 +227,7 @@ function invalidate_under(){
     under_cards.forEach(function(card){
         var elem = document.createElement("img");
         elem.setAttribute("src", "./images/cards/"+card+".jpeg");
-        elem.setAttribute("height", "50");
+        elem.setAttribute("height", "70");
         under_cards_holder.append(elem);
     });
     $(".card2choose").hide();

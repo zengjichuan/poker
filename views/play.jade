@@ -1,45 +1,54 @@
 doctype html
 html
   head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(href='./css/bootstrap.min.css', rel='stylesheet')
     title Poker Game
     link(rel='stylesheet', type='text/css', href='./stylesheets/play.css')
     script(src='./javascripts/jquery-3.1.0.min.js')
+    script(src='./js/bootstrap.min.js')
     script(src='./javascripts/play.js')
   body
     .title
       h1 扑克牌模拟器
+    .option-container
+      select#ts
+        option(value="3") 3人
+        option(value="4", selected=true) 4人
+      input(type="button", id="num_players", value="OK")
+      input(type="button", id="reload_page", value="重新开始")
+    .page-container
+      h2 牌面
+      table.table-fill.table.table-striped
+        thead
+          tr
+            th 玩家
+            th 手牌
+        tbody.table-hover
+          - for (var i = 0; i < 4; i++)
+              tr(id='player_row_'+i, class="player_container")
+                td.text-left 玩家 #{i+1}
+                  input(type="button", value="排序", id="sort_"+i, class="sort_btn")
+                td(id='player'+i, class="card_container")
+                  //- var cards = players[i].cards
+                  //- if (players[i].sorted == false)
+                  //    each card in cards
+                  //      .brightness
+                  //        img(src="./images/cards/K2.jpeg", height="100")
+          tr
+            td 底牌
+            td(id='under', class="card_container")
 
-    select#ts
-      option(value="3") 3人
-      option(value="4", selected=true) 4人
-    input(type="button", id="num_players", value="OK")
-    input(type="button", id="reload_page", value="重新开始")
-    .container
-    table.tale-fill
-      h1 Players
-      thead
-        tr
-          th.text-left Player Id
-          th.text-left Cards
-      tbody.table-hover
-        - for (var i = 0; i < 4; i++)
-            tr(id='player_row_'+i, class="player_container")
-              td.text-left 玩家 #{i+1}
-                input(type="button", value="排序", id="sort_"+i, class="sort_btn")
-              td(id='player'+i, class="card_container")
-                //- var cards = players[i].cards
-                //- if (players[i].sorted == false)
-                //    each card in cards
-                //      .brightness
-                //        img(src="./images/cards/K2.jpeg", height="100")
-        tr
-          td 底牌
-          td(id='under', class="card_container")
 
-
-    .modal.fade
-      table.table.table-striped
-        h1 选牌
+    .choose-panel
+      table
+        h2 选牌
+        .choose-container
+          input(type="text", id="cid", placeholder="卡编号")
+          input(type="button", id="cid_btn", value="确认")
+          #cid_notfound.error
         - for (var i = 0; i < 4; i++)
           tr
             - for (var j = 0; j < 13; j++)
