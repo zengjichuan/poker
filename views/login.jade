@@ -1,0 +1,16 @@
+//
+   Created by zengjichuan on 9/3/16.
+doctype html
+html
+    head
+        title Login
+        meta(http-equiv='content-type', content='text/html; charset=UTF-8')
+    body
+       .page-container
+           h1 Login
+           form(action='', method='post')
+               input.name(type='text', name='name', placeholder='Tom')
+               input.password(type='password', name='password', placeholder='Password')
+               button(type='submit') Login
+               .error
+                   span +

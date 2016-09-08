@@ -1,0 +1,20 @@
+doctype html
+html.home-page
+  head
+    title Poker Man
+  body
+    .title
+      h1 Welcome
+      br
+    .container
+      .row.row-centered
+        .col-lg-6.col-center-block.login
+          form(action='/play', method='post')
+            label Name:
+            input.name(type='text', name='name', placeholder='Tom')
+            br
+            label Password:
+            input.password(type='password', name='password', placeholder='Password')
+            br
+            button.login-btn(type='submit') Login
+        .col-lg-4.col-center-block.reg
