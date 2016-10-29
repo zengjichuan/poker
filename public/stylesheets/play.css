@@ -26,7 +26,7 @@ h2{
 
 .option-container{
     position: relative;
-    left: 42%;
+    left: 38%;
 }
 
 .choose-container{
@@ -34,16 +34,21 @@ h2{
     left: 42%;
 }
 .page-container{
-    margin: 10px auto 0 auto;
+    margin: 10px auto 0 10px;
 }
 
 .error{
     color: red;
 }
 
+#fslabel{
+    margin-left: 20px;
+}
+
 #reload_page{
     margin-left: 50px;
 }
+
 th{
     color: #D5DDE5;
     background: #1710e0;
@@ -69,6 +74,10 @@ th{
 
 .table-fill td:nth-child(1){
     width: 100px;
+}
+
+.table-fill .player_container{
+    height: 120px;
 }
 
 .brightness {

@@ -1,20 +1,29 @@
 doctype html
 html.home-page
   head
-    title Poker Man
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(href='./css/bootstrap.min.css', rel='stylesheet')
+    title Poker Game
+    link(rel='stylesheet', type='text/css', href='./stylesheets/index.css')
+    script(src='./javascripts/jquery-3.1.0.min.js')
+    script(src='./js/bootstrap.min.js')
+    script(src='./js/app_config.js')
+    script(src='./javascripts/play.js')
   body
     .title
-      h1 Welcome
+      h1 欢迎使用扑克模拟系统
       br
     .container
       .row.row-centered
         .col-lg-6.col-center-block.login
           form(action='/play', method='post')
-            label Name:
+            label 用户名
             input.name(type='text', name='name', placeholder='Tom')
             br
-            label Password:
+            label 密码
             input.password(type='password', name='password', placeholder='Password')
             br
-            button.login-btn(type='submit') Login
+            button.login-btn(type='submit') 登陆
         .col-lg-4.col-center-block.reg

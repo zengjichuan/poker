@@ -64,9 +64,10 @@ $(document).ready(function(){
     //});
     $("td.card_container").on("click", ".card2play", function(){
         // use this method to check is the right card can be play
+
         if(/*players[play_offset].cards.indexOf($(this).attr("id")) != -1 && */enable_play){
             var player_idx = parseInt($(this).attr("id")[$(this).attr("id").length - 1]);
-            var card_idx = $(this).attr("id").substring(0, 3);
+            var card_idx = $(this).attr("id").substring(0, $(this).attr("id").length - 2);
             play_card(player_idx, card_idx);
         }
     });
@@ -118,14 +119,14 @@ function init_variables(){
     if (num_players == 3){
         total_card_num = 54;
         remain_card_num = 3;
-        $("#player_row_3").hide();
+        $(".player_row_3").hide();
         // hide deal order option for player 4
         $("#fs4").hide();
         $("#4_0").show();
         $("#4_1").show();
     }else{
         total_card_num = 52;
-        $("#player_row_3").show();
+        $(".player_row_3").show();
         remain_card_num = 4;
         delete card_left["w1"];
         delete card_left["w2"];
@@ -197,7 +198,7 @@ function invalidate_playedcards(index){
     players[index].cards_played.forEach(function(card){
         var elem = document.createElement("img");
         elem.setAttribute("src", "./images/cards/"+card+".jpeg");
-        elem.setAttribute("height", "100");
+        elem.setAttribute("height", "70");
         playedcards_holder.append(elem);
     });
 }

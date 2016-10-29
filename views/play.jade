@@ -19,7 +19,7 @@ html
         option(value="3") 3人
         option(value="4", selected=true) 4人
       input(type="button", id="num_players", value="OK")
-      label 发牌起始位
+      label#fslabel 发牌起始位
       select#fs
         option(value="1") 玩家1
         option(value="2") 玩家2
@@ -33,37 +33,40 @@ html
           tr(id="player_row_2", class="player_container")
             td(rowspan="2", colspan="2")
             td(id = "player_2", class="text-left") 玩家 3
+              input(type="button", value="排序", id="sort_2", class="sort_btn")
+              input(type="button", value="叫牌", id="call_2", class="call_btn")
             td(id="player2", class="card_container")
             td(rowspan="2", colspan="2")
           tr
-            td
-              input(type="button", value="排序", id="sort_2", class="sort_btn")
-              input(type="button", value="叫牌", id="call_2", class="call_btn")
+            td 记牌
             td(id="player_r2", class="card_container")
           tr(id="player_row_1", class="player_container")
             td(id ="player_1", class="text-left") 玩家 2
-            td(id="player1", class="card_container")
-            td(rowspan="2", colspan="2")
-            td(id ="player_3", class="text-left") 玩家 4
-            td(id="player3", class="card_container")
-          tr
-            td
               input(type="button", value="排序", id="sort_1", class="sort_btn")
               input(type="button", value="叫牌", id="call_1", class="call_btn")
-            td(id="player_r1", class="card_container")
-            td
+            td(id="player1", class="card_container")
+            td(rowspan="2", colspan="2")
+              .play-container
+                h2 牌池
+                #card_container.cards_pool
+            td(id ="player_3", class="text-left player_row_3") 玩家 4
               input(type="button", value="排序", id="sort_3", class="sort_btn")
               input(type="button", value="叫牌", id="call_3", class="call_btn")
-            td(id="player_r3", class="card_container")
+            td(id="player3", class="card_container player_row_3")
+          tr
+            td 记牌
+            td(id="player_r1", class="card_container")
+            td.player_row_3 记牌
+            td(id="player_r3", class="card_container player_row_3")
           tr(id="player_row_0", class="player_container")
             td(rowspan="2", colspan="2")
             td(id = "player_0", class="text-left") 玩家 1
+              input(type="button", value="排序", id="sort_0", class="sort_btn")
+              input(type="button", value="叫牌", id="call_0", class="call_btn")
             td(id="player0", class="card_container")
             td(rowspan="2", colspan="2")
           tr
-            td
-              input(type="button", value="排序", id="sort_0", class="sort_btn")
-              input(type="button", value="叫牌", id="call_0", class="call_btn")
+            td 记牌
             td(id="player_r0", class="card_container")
 
           //- for (var i = 0; i < 4; i++)
@@ -83,28 +86,26 @@ html
             td(id='under', class="card_container")
 
 
-    .choose-panel
-      table
-        h2 选牌
-        .choose-container
-          input(type="text", id="cid", placeholder="卡编号")
-          input(type="button", id="cid_btn", value="确认")
-          #cid_notfound.error
-        - for (var i = 0; i < 4; i++)
+      .choose-panel
+        table
+          h2 选牌
+          .choose-container
+            input(type="text", id="cid", placeholder="卡编号")
+            input(type="button", id="cid_btn", value="确认")
+            #cid_notfound.error
+          - for (var i = 0; i < 4; i++)
+            tr
+              - for (var j = 0; j < 13; j++)
+                td
+                  .brightness
+                    img(id=i+"_"+j, src="./images/cards/"+i+"_"+j+".jpeg", height="100", class="card2choose")
           tr
-            - for (var j = 0; j < 13; j++)
-              td
-                .brightness
-                  img(id=i+"_"+j, src="./images/cards/"+i+"_"+j+".jpeg", height="100", class="card2choose")
-        tr
-          td
-            .brightness
-              img(id="4_0", src="./images/cards/4_0.jpeg", height="100", class="card2choose", hidden="")
-          td
-            .brightness
-              img(id="4_1", src="./images/cards/4_1.jpeg", height="100", class="card2choose", hidden="")
+            td
+              .brightness
+                img(id="4_0", src="./images/cards/4_0.jpeg", height="100", class="card2choose", hidden="")
+            td
+              .brightness
+                img(id="4_1", src="./images/cards/4_1.jpeg", height="100", class="card2choose", hidden="")
 
-    .play-container
-      h2 牌池
-      #card_container.cards_pool
+
 
