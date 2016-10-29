@@ -1,155 +1,45 @@
 
-var sort_squence = {
-    '0_0': 45,
-    '0_1': 49,
-    '0_2': 1,
-    '0_3': 5,
-    '0_4': 9,
-    '0_5': 13,
-    '0_6': 17,
-    '0_7': 21,
-    '0_8': 25,
-    '0_9': 29,
-    '0_10': 33,
-    '0_11': 37,
-    '0_12': 41,
-    '1_0': 47,
-    '1_1': 51,
-    '1_2': 3,
-    '1_3': 7,
-    '1_4': 11,
-    '1_5': 15,
-    '1_6': 19,
-    '1_7': 23,
-    '1_8': 27,
-    '1_9': 31,
-    '1_10': 35,
-    '1_11': 39,
-    '1_12': 43,
-    '2_0': 46,
-    '2_1': 50,
-    '2_2': 2,
-    '2_3': 6,
-    '2_4': 10,
-    '2_5': 14,
-    '2_6': 18,
-    '2_7': 22,
-    '2_8': 26,
-    '2_9': 30,
-    '2_10': 34,
-    '2_11': 38,
-    '2_12': 42,
-    '3_0': 44,
-    '3_1': 48,
-    '3_2': 0,
-    '3_3': 4,
-    '3_4': 8,
-    '3_5': 12,
-    '3_6': 16,
-    '3_7': 20,
-    '3_8': 24,
-    '3_9': 28,
-    '3_10': 32,
-    '3_11': 36,
-    '3_12': 40,
-    '4_0': 52,
-    '4_1': 53,
-};
-
-var code_book = {
-    '12': '0_0',
-    '22': '0_1',
-    '32': '0_2',
-    '42': '0_3',
-    '52': '0_4',
-    '62': '0_5',
-    '72': '0_6',
-    '82': '0_7',
-    '92': '0_8',
-    '102': '0_9',
-    'j2': '0_10',
-    'q2': '0_11',
-    'k2': '0_12',
-    '14': '1_0',
-    '24': '1_1',
-    '34': '1_2',
-    '44': '1_3',
-    '54': '1_4',
-    '64': '1_5',
-    '74': '1_6',
-    '84': '1_7',
-    '94': '1_8',
-    '104': '1_9',
-    'j4': '1_10',
-    'q4': '1_11',
-    'k4': '1_12',
-    '13': '2_0',
-    '23': '2_1',
-    '33': '2_2',
-    '43': '2_3',
-    '53': '2_4',
-    '63': '2_5',
-    '73': '2_6',
-    '83': '2_7',
-    '93': '2_8',
-    '103': '2_9',
-    'j3': '2_10',
-    'q3': '2_11',
-    'k3': '2_12',
-    '11': '3_0',
-    '21': '3_1',
-    '31': '3_2',
-    '41': '3_3',
-    '51': '3_4',
-    '61': '3_5',
-    '71': '3_6',
-    '81': '3_7',
-    '91': '3_8',
-    '101': '3_9',
-    'j1': '3_10',
-    'q1': '3_11',
-    'k1': '3_12',
-    'w1': '4_0',
-    'w2': '4_1',
-};
+// load config
+$.getScript("../js/app_config.js", function(){});
 
 var num_players = 4;
 var players = [];
-var offset = 0;
+var deal_offset = 0;
+var play_offset = 0;
 var total_card_num = 54;
 var remain_card_num = 3;
 var under_cards =[];
 var card_left = jQuery.extend({}, code_book);
+var cards_pool = [];
+var enable_play = false;
 
 $(document).ready(function(){
     init_variables();
+
+    // model selection
     $('#num_players').click(function(){
         var op = $('#ts');
-
         num_players = op.val();
-        if (num_players == 3){
-            $("#player_row_3").hide();
-            remain_card_num = 3;
-            $("#4_0").show();
-            $("#4_1").show();
-        } else{
-            $("#player_row_3").show();
-            remain_card_num = 4;
-            $("#4_0").hide();
-            $("#4_1").hide();
-            delete card_left["w1"];
-            delete card_left["w2"];
-        }
         refresh();
     });
 
+    // deal position
+    $('#fs').on('change', function(){
+        deal_offset = this.value - 1;
+        refresh();
+    });
+    //
+    // reload page btn
     $('#reload_page').click(function(){
         refresh();
     });
 
+    //
     $("#Enter").on('click', function(){
         $(this).hide();
     });
+
+    // when card is selected while dealing
     $(".card2choose").on('click', function(){
         $(this).hide();
         // submit the card to player
@@ -160,15 +50,47 @@ $(document).ready(function(){
         //alert("total "+total_card_num+" remain "+remain_card_num+" under " + under_cards.length);
         if(total_card_num - remain_card_num == 0){
             invalidate_under();
+
         }
     });
 
+    // when card is selected while playing
+    //$(".card2play").on("click", function(){
+    //    // use this method to check is the right card can be play
+    //    alert($(this).attr("id") + "playoffset: "+play_offset);
+    //    if($(this).attr("id") in players[play_offset].cards){
+    //        play_card(play_offset, $(this).attr("id"));
+    //    }
+    //});
+    $("td.card_container").on("click", ".card2play", function(){
+        // use this method to check is the right card can be play
+        if(/*players[play_offset].cards.indexOf($(this).attr("id")) != -1 && */enable_play){
+            var player_idx = parseInt($(this).attr("id")[$(this).attr("id").length - 1]);
+            var card_idx = $(this).attr("id").substring(0, 3);
+            play_card(player_idx, card_idx);
+        }
+    });
+    // sort btn
     $(".sort_btn").click(function(){
         player_to_sort = $(this).attr("id");
-        index = parseInt(player_to_sort[player_to_sort.length - 1]);
+        index = parseInt(player_to_sort[player_to_sort.length - 1]);    // last num
         sort_cards(index);
     });
-
+    // call btn
+    $(".call_btn").click(function(){
+        player_to_call = $(this).attr("id");
+        index = parseInt(player_to_call[player_to_call.length - 1]);
+        var lord_label = document.createElement("label");
+        lord_label.setAttribute("class", "lord_label");
+        lord_label.innerHTML = "地主";
+        $("#player_"+index).append(lord_label);
+        call_cards(index);
+        enable_play = true;
+        $(".choose-panel").hide();
+    });
+    /*
+    This is for card decode
+     */
     $('#cid').keyup(function(){
         if(event.keyCode == 13){
             $('#cid_btn').click();
@@ -188,50 +110,98 @@ $(document).ready(function(){
 });
 
 function init_variables(){
-    players = [];
-    under_cards = [];
+    // get all the cards
     card_left = jQuery.extend({}, code_book);
+    // show all the cards for deal
+    $(".card2choose").show();
+    $(".choose-panel").show();
     if (num_players == 3){
         total_card_num = 54;
-        remain_card_num = 3
+        remain_card_num = 3;
+        $("#player_row_3").hide();
+        // hide deal order option for player 4
+        $("#fs4").hide();
+        $("#4_0").show();
+        $("#4_1").show();
     }else{
         total_card_num = 52;
+        $("#player_row_3").show();
         remain_card_num = 4;
         delete card_left["w1"];
         delete card_left["w2"];
+        // show deal order option for player 4
+        $("#fs4").show();
+        // hide kings
+        $("#4_0").hide();
+        $("#4_1").hide();
     }
 
-    offset = 0;
+    // init under card
+    under_cards = [];
     for (var key in card_left)
         under_cards.push(card_left[key]);
-
+    // init player
+    players = [];
     for (var i = 0; i < num_players; i++){
-        players.push(new player(i, [], false));
+        players.push(new player(i, [], false, []));
     }
+    cards_pool = [];
+    // remove lord label
+    $(".lord_label").remove();
     // hide sort button
     $(".sort_btn").hide();
+    $(".call_btn").hide();
     $('#cid_notfound').html("");
+    enable_play = false;
 }
 
 function send_card2player(card_id){
-    players[offset].cards.push(card_id);
-    invalidate_cards(offset);
-    offset = (offset + 1) % num_players;
+    players[deal_offset].cards.push(card_id);
+    invalidate_cards(deal_offset);
+    deal_offset = (deal_offset + 1) % num_players;
 }
 
-function invalidate_cards(offset){
-    var player_cards = $("#player"+offset);
+function play_card(player_idx, card_idx){
+    var idx_ = players[player_idx].cards.indexOf(card_idx);
+    players[player_idx].cards.splice(idx_, 1);
+    invalidate_cards(player_idx);
+    players[player_idx].cards_played.push(card_idx);
+    cards_pool.push(card_idx);
+    invalidate_pool();
+    invalidate_playedcards(player_idx);
+    play_offset = (play_offset + 1) % num_players;
+}
+
+// display cards according to the players.cards
+function invalidate_cards(index){
+    var player_cards = $("#player"+index);
     player_cards.empty();
-    if(players[offset].sorted == true)
-        players[offset].cards.sort(sort_func);
-    players[offset].cards.forEach(function(card){
+    if(players[index].sorted == true)
+        players[index].cards.sort(sort_func);
+    players[index].cards.forEach(function(card){
+        var div = document.createElement("div");
+        div.setAttribute("class", "play_brightness");
         var elem = document.createElement("img");
-        elem.setAttribute("src", "./images/cards/"+card+".jpeg")
+        elem.setAttribute("id", card+"_"+index);
+        elem.setAttribute("class", "card2play");
+        elem.setAttribute("src", "./images/cards/"+card+".jpeg");
         elem.setAttribute("height", "100");
-        player_cards.append(elem);
+        div.append(elem);
+        player_cards.append(div);
     });
 }
 
+function invalidate_playedcards(index){
+    var playedcards_holder = $("#player_r"+index);
+    playedcards_holder.empty();
+    players[index].cards_played.forEach(function(card){
+        var elem = document.createElement("img");
+        elem.setAttribute("src", "./images/cards/"+card+".jpeg");
+        elem.setAttribute("height", "100");
+        playedcards_holder.append(elem);
+    });
+}
+// display under cards according to the under_cards
 function invalidate_under(){
     var under_cards_holder = $("#under");
     under_cards_holder.empty();
@@ -245,6 +215,18 @@ function invalidate_under(){
     });
     $(".card2choose").hide();
     $(".sort_btn").show();
+    $(".call_btn").show();
+}
+
+function invalidate_pool(){
+    var cards_pool_holder = $(".cards_pool");
+    cards_pool_holder.empty();
+    cards_pool.forEach(function(card){
+        var elem = document.createElement("img");
+        elem.setAttribute("src", "./images/cards/"+card+".jpeg");
+        elem.setAttribute("height", "50");
+        cards_pool_holder.append(elem);
+    });
 }
 
 function sort_cards(idx){
@@ -256,24 +238,42 @@ function sort_func(a, b){
     return sort_squence[a] - sort_squence[b];
 }
 
+function call_cards(idx){
+    players[idx].cards = players[idx].cards.concat(under_cards);
+    invalidate_cards(idx);
+    play_offset = idx;
+    $(".call_btn").hide();
+    under_cards = [];
+    invalidate_under();
+}
+
+function enable_play(){
+    // when card is selected while playing
+    //$(".card2play").on("click", function(){
+    //    // use this method to check is the right card can be play
+    //    alert($(this).attr("id") + "playoffset: "+play_offset);
+    //    if($(this).attr("id") in players[play_offset].cards){
+    //        play_card(play_offset, $(this).attr("id"));
+    //    }
+    //});
+}
+
+// invalidate the view
 function refresh(){
     // clear the state
     init_variables();
     for (var i = 0; i < num_players; i++){
         invalidate_cards(i);
+        invalidate_playedcards(i);
     }
     invalidate_under();
-
-    $(".card2choose").show();
-    if (num_players == 4) {
-        $("#4_0").hide();
-        $("#4_1").hide();
-    }
+    invalidate_pool();
 }
-function player(id, cards, sorted){
+function player(id, cards, sorted, cards_played){
     this.id = id;
     this.cards = cards;
     this.sorted = sorted;
+    this.cards_played = cards_played;
 }
 
 function getKeyByValue(dict, value){

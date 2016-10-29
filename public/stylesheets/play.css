@@ -79,3 +79,12 @@ th{
 .brightness img:hover {
     opacity: .5;
 }
+
+.play_brightness {
+    background-color: white;
+    display: inline-block;
+
+}
+.play_brightness img:hover {
+    opacity: .5;
+}
